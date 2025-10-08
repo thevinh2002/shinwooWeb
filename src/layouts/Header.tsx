@@ -1,103 +1,150 @@
-// src/components/Header.tsx
-import React, { useState } from "react";
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuItems,
+} from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import Logo from "../images/Header/Logo_SGI.png";
+import { useState } from "react";
+interface NavItem {
+  name: string;
+  href: string;
+  current: boolean;
+}
 
-const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+const navigation: NavItem[] = [
+  { name: "Home", href: "/", current: true },
+  { name: "Facility", href: "/facility", current: false },
+  { name: "Products", href: "/products", current: false },
+  { name: "Customer", href: "/customer", current: false },
+  { name: "Career", href: "/career", current: false },
+  { name: "Quality", href: "/quality", current: false },
+  { name: "Location", href: "/location", current: false },
+];
+function classNames(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(" ");
+}
+
+export default function Header() {
+  const [active, setActive] = useState("Home");
 
   return (
-    <nav className="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-        {/* Logo Section */}
-        <Link to="/" className="flex items-center space-x-3">
-          <img 
-            src="https://flowbite.com/docs/images/logo.svg" 
-            className="h-8" 
-            alt="Flowbite Logo" 
-          />
-          <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            Flowbite
-          </span>
-        </Link>
+    <Disclosure as="nav" className="relative bg-white border-b border-gray-200">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-16 items-center justify-between">
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            {/* Mobile menu button */}
+            <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-600 hover:bg-gray-100 hover:text-black focus:outline-2 focus:-outline-offset-1 focus:outline-indigo-500">
+              <span className="absolute -inset-0.5" />
+              <span className="sr-only">Open main menu</span>
+              <Bars3Icon
+                aria-hidden="true"
+                className="block size-6 group-data-open:hidden"
+              />
+              <XMarkIcon
+                aria-hidden="true"
+                className="hidden size-6 group-data-open:block"
+              />
+            </DisclosureButton>
+          </div>
+          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex shrink-0 items-center">
+              <img alt="Your Company" src={Logo} className="h-8 w-auto" />
+            </div>
+          </div>
 
-        {/* Mobile Menu Button */}
-        {/* <button 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          type="button" 
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-          aria-controls="navbar-default" 
-          aria-expanded={isMenuOpen}
-        >
-          <span className="sr-only">Open main menu</span>
-          <svg 
-            className="w-5 h-5" 
-            aria-hidden="true" 
-            xmlns="http://www.w3.org/2000/svg" 
-            fill="none" 
-            viewBox="0 0 17 14"
-          >
-            <path 
-              stroke="currentColor" 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth="2" 
-              d="M1 1h15M1 7h15M1 13h15"
-            />
-          </svg>
-        </button> */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            <div className="hidden sm:ml-6 sm:block">
+              <div className="flex space-x-4">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setActive(item.name)}
+                    className={classNames(
+                      active === item.name
+                        ? "bg-gray-100 text-black shadow-md"
+                        : "text-gray-700 hover:bg-gray-100 hover:text-black",
+                      "rounded-md px-3 py-2 text-sm font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
 
-        {/* Navigation Menu */}
-        <div 
-          className={`${isMenuOpen ? 'block' : 'hidden'} w-full md:block md:w-auto`} 
-          id="navbar-default"
-        >
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <Link 
-                to="/" 
-                className="block py-2 px-3 text-white bg-blue-700 rounded md:bg-transparent md:text-blue-700 md:p-0 dark:text-white md:dark:text-blue-500"
-                aria-current="page"
+            {/* Profile dropdown */}
+            <Menu as="div" className="relative ml-3">
+              <MenuButton className="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
+                <span className="absolute -inset-1.5" />
+                <span className="sr-only">Open user menu</span>
+                <img
+                  alt=""
+                  src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                  className="size-8 rounded-full bg-gray-200 outline -outline-offset-1 outline-black/10"
+                />
+              </MenuButton>
+
+              <MenuItems
+                transition
+                className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/10 transition data-closed:scale-95 data-closed:opacity-0"
               >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/products" 
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Products
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/services" 
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Services
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/pricing" 
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Pricing
-              </Link>
-            </li>
-            <li>
-              <Link 
-                to="/contact" 
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
-              >
-                Contact
-              </Link>
-            </li>
-          </ul>
+                <MenuItem>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Your profile
+                  </Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Settings
+                  </Link>
+                </MenuItem>
+                <MenuItem>
+                  <Link
+                    to="/"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Sign out
+                  </Link>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+          </div>
         </div>
       </div>
-    </nav>
-  );
-};
 
-export default Header;
+      <DisclosurePanel className="sm:hidden border-t border-gray-200 bg-white">
+        <div className="space-y-1 px-2 pt-2 pb-3">
+          {navigation.map((item) => (
+            <DisclosureButton
+              key={item.name}
+              as="a"
+              href={item.href}
+              aria-current={item.current ? "page" : undefined}
+              className={classNames(
+                item.current
+                  ? "bg-gray-100 text-black"
+                  : "text-gray-700 hover:bg-gray-100 hover:text-black",
+                "block rounded-md px-3 py-2 text-base font-medium"
+              )}
+            >
+              {item.name}
+            </DisclosureButton>
+          ))}
+        </div>
+      </DisclosurePanel>
+    </Disclosure>
+  );
+}
